@@ -1,37 +1,108 @@
-# Yolo-FaceEmotionAI
+# Yolo - FaceEmotionAI 项目介绍
 
-#### 介绍
-人脸情绪识别
+## 项目概述
+Yolo - FaceEmotionAI 是一个结合 YOLO 目标检测算法与深度学习技术的人脸情绪识别项目。项目利用 fer2013 数据集进行训练，旨在实现对图像、视频或摄像头实时画面中的人脸情绪进行精准识别。它涵盖了模型训练、模型转换、图形用户界面交互等多个功能模块，为开发者和研究者提供了一个完整的人脸情绪识别解决方案。
 
-#### 软件架构
-软件架构说明
+## 项目结构
+```plaintext
+Yolo-FaceEmotionAI/
+├── data/
+│   ├── train/
+│   │   └── images/
+│   ├── valid/
+│   │   └── images/
+│   └── test/
+│       └── images/
+├── function/
+│   ├── color
+│   ├── tracking
+│   ├── image
+│   ├── model_loader.py
+│   ├── frame_processor.py
+│   ├── video_processor.py
+│   └── image_processor.py
+├── gui/
+│   └── main_gui.py
+├── utils/
+│   ├── setup.py
+│   └── model_onnx.py
+├── models/
+│   ├── best.pt
+│   ├── yolo11n - seg.pt
+│   ├── train.py
+│   └── data.yaml
+```
+
+## 主要模块功能
+
+### 数据集（fer2013）
+fer2013 是一个广泛用于人脸情绪识别研究的公开数据集，包含了大量标注好的人脸图像，涵盖了多种不同的情绪类别。在本项目中，数据集被划分为训练集、验证集和测试集，分别存放在 `data/train/images`、`data/valid/images` 和 `data/test/images` 目录下，为模型的训练和评估提供了基础数据。
+
+### 功能模块（function）
+1. **`color`**：该模块主要负责生成特定数量的颜色列表，用于在图像上绘制不同目标的边界框和标签，以便在可视化检测结果时能够清晰区分不同的目标。
+2. **`tracking`**：借助 DeepSORT 算法实现对检测到的人脸目标进行多目标跟踪。在处理视频或实时画面时，能够为每个目标分配唯一的 ID，并在图像上绘制边界框和标签，实时显示目标的 ID 和情绪信息，从而实现对目标的连续跟踪和状态监测。
+3. **`image`**：提供了图像缩放功能，可将输入的图像调整为指定的大小。在模型处理之前，对图像进行统一的尺寸调整有助于提高模型的处理效率和准确性。
+4. **`model_loader.py`**：负责加载实例分割和情绪识别所需的预训练模型。通过指定模型文件的路径，该模块能够快速加载相应的模型，为后续的检测和识别任务做好准备。
+5. **`frame_processor.py`**：对单帧图像进行处理，主要包括实例分割和情绪识别两个关键步骤。它接收输入的图像帧，利用加载的模型进行目标检测和情绪分类，最终返回检测结果，为后续的处理和展示提供数据支持。
+6. **`video_processor.py`**：用于处理视频文件或摄像头实时画面。它会逐帧读取视频数据，并调用 `frame_processor.py` 对每一帧进行处理，同时结合 `tracking` 模块实现多目标跟踪，将处理后的视频帧实时显示或保存。
+7. **`image_processor.py`**：专门处理单张图像。它调用 `frame_processor.py` 对输入的图像进行检测和识别，并将处理后的图像显示出来，方便用户直观查看检测结果。
+
+### GUI 模块（gui）
+- **`main_gui.py`**：使用 `tkinter` 库创建了一个图形用户界面，为用户提供了一个直观、便捷的交互方式。界面上包含三个按钮，分别用于选择图像、选择视频和开启摄像头进行实时检测。用户可以通过点击相应的按钮，轻松地对不同类型的输入进行情绪识别处理。
+
+### 辅助工具模块（utils）
+1. **`setup.py`**：使用 `setuptools` 对项目进行打包，方便项目的分发和安装。它定义了项目的基本信息，如名称、版本、作者等，同时列出了项目的依赖项，确保在安装项目时能自动安装所需的库。此外，还定义了命令行入口点，方便用户在命令行中使用项目。
+2. **`model_onnx.py`**：该模块的主要功能是将训练好的 YOLO 模型转换为 ONNX 格式。ONNX 是一种开放的神经网络交换格式，支持不同深度学习框架之间的模型迁移和部署。通过将模型转换为 ONNX 格式，可以提高模型的兼容性和可移植性，使其能够在更多的设备和平台上运行。
+
+### 模型与训练模块（models）
+1. **`best.pt`**：预训练的 YOLO 模型，作为模型训练的起点。它包含了在大规模数据集上学习到的特征和模式，能够为后续的人脸情绪识别任务提供一个良好的基础。
+2. **`yolo11n - seg.pt`**：可能是一个预训练的分割模型，可用于辅助进行人脸区域的精确分割，为情绪识别提供更准确的输入。
+3. **`train.py`**：使用 `ultralytics` 库加载预训练模型，并根据 `data.yaml` 中的配置进行训练。训练过程中，模型会不断调整参数以适应 fer2013 数据集的特征，最终保存训练好的模型，用于后续的推理任务。
+4. **`data.yaml`**：数据配置文件，定义了数据集的路径、类别数量和类别名称，以及所使用的网络配置。它为模型训练提供了必要的信息，确保模型能够正确读取和处理数据。
+
+## 项目依赖
+- `numpy==1.24.3`
+- `opencv - python==4.11.0.86`
+- `ultralytics==8.3.86`
+- `deep_sort_realtime==1.3.2`
+- `tkinter`（Python 标准库）
+
+## 使用方法
+
+### 环境搭建
+确保已经安装了所需的依赖库，可以使用以下命令进行安装：
+```bash
+pip install -r requirements.txt
+```
+
+### 模型训练
+运行 `models/train.py` 脚本进行模型训练：
+```bash
+python models/train.py
+```
+
+### 模型转换
+运行 `utils/model_onnx.py` 脚本将训练好的模型转换为 ONNX 格式：
+```bash
+python utils/model_onnx.py
+```
+
+### 启动 GUI 界面
+运行 `gui/main_gui.py` 脚本启动图形用户界面：
+```bash
+python gui/main_gui.py
+```
+在 GUI 界面中，根据需要选择相应的按钮进行图像、视频或摄像头实时检测。
+
+## 注意事项
+- 确保 fer2013 数据集的路径在 `models/data.yaml` 中配置正确，否则模型训练和评估可能无法正常进行。
+- 在处理视频或摄像头实时画面时，按 'q' 键可以退出处理过程，避免资源占用。
+- 训练模型可能需要较长的时间，建议使用 GPU 进行加速，以提高训练效率。
+
+## 贡献与反馈
+如果你对本项目有任何建议或发现了问题，欢迎提交 Issue 或 Pull Request，我们将竭诚为你服务。
+
+## 许可证
+本项目采用 [MIT 许可证](LICENSE) 进行授权。 
 
 
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
