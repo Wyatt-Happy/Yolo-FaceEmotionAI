@@ -14,9 +14,9 @@ Yolo-FaceEmotionAI/
 │   └── test/
 │       └── images/
 ├── function/
-│   ├── color
-│   ├── tracking
-│   ├── image
+│   ├── color.py
+│   ├── tracking.py
+│   ├── image.py
 │   ├── model_loader.py
 │   ├── frame_processor.py
 │   ├── video_processor.py
