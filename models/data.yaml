@@ -1,0 +1,22 @@
+data: "E:/data"
+
+train: "E:/Yolo-FaceEmotionAI/data/train/images"
+val: "E:/Yolo-FaceEmotionAI/data/valid/images"
+test: "E:/Yolo-FaceEmotionAI/data/test/images"
+
+nc: 8
+
+names:
+  [
+    "Anger",
+    "Contempt",
+    "Disgust",
+    "Fear",
+    "Happy",
+    "Neutral",
+    "Sad",
+    "Surprise",
+  ]
+
+# Network configuration (choose other variations if desired)
+network: "yolo11n"
