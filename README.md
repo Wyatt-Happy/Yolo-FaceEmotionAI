@@ -198,3 +198,5 @@ python utils/model_onnx.py
 ---
 
 <p align="center">张允泽 · MIT License</p>
+# 友情链接
+[linux.do](https://linux.do)
